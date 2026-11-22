@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent" android:background="#000000">
+    <ImageView android:id="@+id/base" android:layout_width="match_parent" android:layout_height="match_parent"
+        android:paddingLeft="@dimen/shake_margin" android:paddingRight="@dimen/shake_margin"
+        android:scaleType="fitCenter" android:src="@drawable/banner_base" />
+    <ViewFlipper android:id="@+id/flipper" android:layout_width="match_parent" android:layout_height="match_parent"
+        android:autoStart="true" android:flipInterval="100">
+        <ImageView android:id="@+id/n0" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitCenter" />
+        <ImageView android:id="@+id/n1" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitCenter" />
+        <ImageView android:id="@+id/n2" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitCenter" />
+        <ImageView android:id="@+id/n3" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitCenter" />
+        <ImageView android:id="@+id/n4" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitCenter" />
+        <ImageView android:id="@+id/n5" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitCenter" />
+        <ImageView android:id="@+id/n6" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitCenter" />
+        <ImageView android:id="@+id/n7" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitCenter" />
+    </ViewFlipper>
+</FrameLayout>

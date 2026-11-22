@@ -1,0 +1,8 @@
+.gradle/
+.kotlin/
+build/
+app/build/
+local.properties
+work/
+*.mp3
+Орочья челюсть WAAAGH!.png

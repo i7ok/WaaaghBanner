@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- side margin of the banner; must be >= shake_unit -->
+    <dimen name="shake_margin">5dp</dimen>
+    <dimen name="shake_unit">3dp</dimen>
+</resources>

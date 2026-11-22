@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WAAAGH! Battery</string>
+    <string name="widget_name">WAAAGH! заряд</string>
+    <string name="widget_desc">Заряд батареи цветом букв WAAAGH!</string>
+    <string name="listener_name">WAAAGH! — тряска на уведомления</string>
+    <string name="cover_service_name">WAAAGH! на внешнем экране</string>
+    <string name="cover_service_desc">Показывает на внешнем экране только баннер WAAAGH! и не даёт экрану гаснуть, пока телефон закрыт. Двойной тап по баннеру скрывает его на 10 секунд. Служба ничего не читает с экрана.</string>
+</resources>
