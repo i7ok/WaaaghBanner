@@ -11,6 +11,7 @@ import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import android.widget.RemoteViews
+import com.waaagh.battery.BannerController
 import com.waaagh.battery.R
 import com.waaagh.battery.core.DisplayState
 import com.waaagh.battery.core.Mode
@@ -18,9 +19,9 @@ import com.waaagh.battery.core.ShakePattern
 import com.waaagh.battery.ui.TestActivity
 
 /**
- * Builds RemoteViews for the current state.
+ * Builds RemoteViews of the home-screen widget for the current state.
  *
- * Shake methods (to be compared on the cover screen):
+ * Shake methods (switch on the test screen):
  *  - FLIPPER: pre-rendered positions of the letter layer inside a ViewFlipper,
  *    flipped by the host itself.
  *  - MANUAL:  one ImageView, our process moves it with partial updates.
@@ -52,7 +53,7 @@ object WidgetUpdater {
         stopManual()
         val ids = widgetIds(ctx)
         if (ids.isEmpty()) { lastStatus = "виджет не добавлен"; return }
-        val renderer = com.waaagh.battery.BannerController.renderer
+        val renderer = BannerController.renderer
         val t0 = SystemClock.uptimeMillis()
         val bmp = renderer.renderLetters(s.spec)
         val method = shakeMethod(ctx)
@@ -73,8 +74,8 @@ object WidgetUpdater {
             s.mode == Mode.NOTIFICATION -> flipper(ctx, R.layout.widget_notify, NOTIFY_IDS, ShakePattern.NOTIFY, bmp, unit, margin)
             else -> flipper(ctx, R.layout.widget_call, CALL_IDS, ShakePattern.CALL, bmp, unit, margin)
         }
-        // All paddings in px from one place: XML dimens would be resolved with the
-        // host display's density (cover screen 160 dpi) and drift from ours.
+        // All paddings in px from one place: XML dimens are resolved with the host
+        // display's density, which may differ from ours (cover screen is 160 dpi).
         rv.setViewPadding(R.id.base, margin, 0, margin, 0)
         if (s.mode == Mode.BATTERY || method == ShakeMethod.MANUAL) rv.setViewPadding(R.id.letters, margin, 0, margin, 0)
         val open = PendingIntent.getActivity(ctx, 0, Intent(ctx, TestActivity::class.java),

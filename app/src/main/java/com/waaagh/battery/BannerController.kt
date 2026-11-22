@@ -37,7 +37,6 @@ object BannerController {
     val state: DisplayState get() = machine.current
     val realLevel: Int get() = machine.realLevel
     val testLevel: Int? get() = machine.testLevel
-    val ringing: Boolean get() = machine.ringing
 
     private val scheduler = object : Scheduler {
         override fun schedule(delayMs: Long, block: () -> Unit): Cancellable {

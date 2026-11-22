@@ -30,14 +30,14 @@ import android.widget.TextView
 import com.waaagh.battery.BannerController
 import com.waaagh.battery.R
 import com.waaagh.battery.core.DisplayState
-import com.waaagh.battery.cover.CoverOverlayService
 import com.waaagh.battery.core.Mode
+import com.waaagh.battery.cover.CoverOverlayService
 import com.waaagh.battery.events.CallMonitor
 import com.waaagh.battery.events.KeepAliveService
 import com.waaagh.battery.events.WaaaghNotificationListener
 import com.waaagh.battery.widget.WidgetUpdater
 
-/** Test screen: charge slider, simulated events, permissions, shake method. */
+/** Test screen: charge slider, simulated events, permissions, widget shake method. */
 class TestActivity : Activity() {
     private lateinit var banner: BannerView
     private lateinit var status: TextView
@@ -129,7 +129,7 @@ class TestActivity : Activity() {
         col.addView(group)
 
         col.addView(text("Доступы"))
-        col.addView(button("Внешний экран: только баннер, всегда включён") { openAccessibilitySettings() })
+        col.addView(button("Баннер на внешнем экране") { openAccessibilitySettings() })
         col.addView(row(
             button("Уведомления") { openListenerSettings() },
             button("Звонки") { requestPermissions(arrayOf(Manifest.permission.READ_PHONE_STATE), REQ_PHONE) },
@@ -207,12 +207,7 @@ class TestActivity : Activity() {
     }
 
     private fun openAccessibilitySettings() {
-        val cn = ComponentName(this, CoverOverlayService::class.java)
-        val detail = Intent("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")
-            .putExtra(Intent.EXTRA_COMPONENT_NAME, cn.flattenToString())
-        try { startActivity(detail) } catch (e: Exception) {
-            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-        }
+        try { startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) } catch (_: Exception) {}
     }
 
     private fun requestNoBatteryLimits() {

@@ -13,22 +13,18 @@ import com.waaagh.battery.core.Mode
 import com.waaagh.battery.core.ShakePattern
 
 /**
- * Test-screen preview: the same base + letter bitmaps and the same shake
- * pattern as the widget, drawn with fitCenter and the same side margin.
+ * Banner drawn with the shared renderer's bitmaps and the same shake pattern as
+ * the widget (fitCenter, same side margin). Used by the test screen (2:1 strip)
+ * and the cover screen ([fillParent] = take the whole view).
  */
 class BannerView(ctx: Context, private val fillParent: Boolean = false) : View(ctx) {
-    /** Whole-picture offset in px (anti burn-in drift on the always-on cover screen). */
-    var driftX = 0f
-        set(v) { field = v; invalidate() }
-    var driftY = 0f
-        set(v) { field = v; invalidate() }
-
     private var base: Bitmap? = null
     private var letters: Bitmap? = null
     private var dxUnits = 0
     private var frame = 0
     private var state: DisplayState? = null
     private val paint = Paint(Paint.FILTER_BITMAP_FLAG)
+    private val dst = RectF()
     private val unit = resources.getDimension(R.dimen.shake_unit)
     private val margin = resources.getDimension(R.dimen.shake_margin)
 
@@ -61,6 +57,11 @@ class BannerView(ctx: Context, private val fillParent: Boolean = false) : View(c
         invalidate()
     }
 
+    override fun onDetachedFromWindow() {
+        removeCallbacks(ticker)
+        super.onDetachedFromWindow()
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val w = MeasureSpec.getSize(widthMeasureSpec)
         if (fillParent) setMeasuredDimension(w, MeasureSpec.getSize(heightMeasureSpec))
@@ -71,18 +72,17 @@ class BannerView(ctx: Context, private val fillParent: Boolean = false) : View(c
         canvas.drawColor(Color.BLACK)
         val b = base ?: return
         val l = letters ?: return
-        val dst = fit(b.width, b.height, margin, width - margin, height.toFloat())
-        dst.offset(driftX, driftY)
+        fit(b.width, b.height, margin, width - margin, height.toFloat())
         canvas.drawBitmap(b, null, dst, paint)
         dst.offset(dxUnits * unit, 0f)
         canvas.drawBitmap(l, null, dst, paint)
     }
 
-    private fun fit(bw: Int, bh: Int, left: Float, right: Float, h: Float): RectF {
+    private fun fit(bw: Int, bh: Int, left: Float, right: Float, h: Float) {
         val aw = right - left
         val s = minOf(aw / bw, h / bh)
         val w = bw * s; val hh = bh * s
         val x = left + (aw - w) / 2; val y = (h - hh) / 2
-        return RectF(x, y, x + w, y + hh)
+        dst.set(x, y, x + w, y + hh)
     }
 }

@@ -2,15 +2,15 @@
 
 Canvas: W x H (2:1), banner content fitted with a margin for the shake.
 Outputs:
-  app/src/main/res/drawable-nodpi/banner_base.png  - black bg + jaw (+sparks), letters removed
-  app/src/main/assets/banner/letters_orig.png       - RGBA letter layer, source colours
-  app/src/main/assets/banner/letters_metal.png      - RGBA, dull dark steel
-  app/src/main/assets/banner/letters_red.png        - RGBA, paint turned red
-  app/src/main/assets/banner/symbols.png            - L8: symbol index 0..6, 255 = none
-  app/src/main/assets/banner/meta.json              - canvas size, per-symbol top/bottom
-  work/preview_*.png                                - reference composites (Python)
+  app/src/main/res/drawable-nodpi/banner_base.png    - black bg + jaw (+sparks), letters removed
+  app/src/main/res/drawable-nodpi/widget_preview.png - widget picker preview (70 %)
+  app/src/main/assets/banner/letters_orig.png         - RGBA letter layer, source colours
+  app/src/main/assets/banner/symbols.png              - symbol index 0..6 (255 = none) in R=G=B
+  app/src/main/assets/banner/meta.txt                 - canvas size, per-symbol top/bottom
+  work/preview_*.png                                  - reference renders (same math as BannerMath.kt)
+Steel and red paint are computed at runtime from letters_orig (BannerMath.kt).
 """
-import json, os, sys
+import json, os
 import numpy as np, cv2
 
 W, H = 600, 300
@@ -20,7 +20,6 @@ os.chdir(ROOT)
 
 src = cv2.imread('source/waaagh_banner.png').astype(np.float32) / 255.0      # BGR
 labels = cv2.imread('work/labels.png', 0)
-hh, ww = labels.shape
 V = src.max(2)
 
 # ---- content bbox and placement -------------------------------------------
@@ -30,7 +29,6 @@ x0, x1, y0, y1 = xs.min(), xs.max() + 1, ys.min(), ys.max() + 1
 scale = min((W - 2 * MARGIN) / (x1 - x0), (H - 2 * MARGIN) / (y1 - y0))
 ox = (W - (x1 - x0) * scale) / 2 - x0 * scale
 oy = (H - (y1 - y0) * scale) / 2 - y0 * scale
-M = np.float32([[scale, 0, ox], [0, scale, oy]])
 print('content', (x0, y0, x1, y1), 'scale %.4f' % scale)
 
 
@@ -76,8 +74,7 @@ cov = np.stack([place((labels == 10 + s).astype(np.float32)) for s in range(7)],
 sym = np.argmax(cov, 0).astype(np.uint8)
 sym[cov.max(0) < 1e-3] = 255
 
-meta = {'width': W, 'height': H, 'scale': float(scale), 'offsetX': float(ox), 'offsetY': float(oy),
-        'symbols': []}
+meta = {'symbols': []}
 names = ['W', 'A1', 'A2', 'A3', 'G', 'H', '!']
 for s in range(7):
     yy, _ = np.nonzero(labels == 10 + s)

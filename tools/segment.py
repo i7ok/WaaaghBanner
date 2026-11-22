@@ -19,18 +19,13 @@ paint = ((S > 140) & (V > 110) & ((H < 150) | (H > 330))).astype(np.uint8)
 paint = cv2.morphologyEx(paint, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
 n, lab, st, cen = cv2.connectedComponentsWithStats(paint, 8)
 
-# Assign each paint component (>=300 px) to a symbol by the centroid,
-# using hand-checked anchor components (see tools/segment.py debug output).
+# Assign each paint component (>=300 px) to a symbol by its centroid: the
+# nearest of these hand-checked anchors (one big paint area per symbol).
 ANCHORS = {0: (283, 348), 1: (564, 370), 2: (816, 344), 3: (1036, 361),
            4: (1234, 341), 5: (1458, 377), 6: (1637, 305)}
 DOT = (1591, 550)  # '!' dot
-JAW_COMPS_BELOW = 560  # components centred lower than this inside jaw zone are rust
 
-
-def in_poly(pt, poly):
-    return cv2.pointPolygonTest(np.array(poly, np.int32), (float(pt[0]), float(pt[1])), False) >= 0
-
-
+# Jaw markers (hand-placed polygons, safely inside the jaw and teeth)
 JAW_UPPER = [(275, 520), (320, 590), (440, 650), (600, 690), (720, 690), (900, 690),
              (1000, 670), (1130, 650), (1250, 620), (1320, 600)]
 JAW_LOWER = [(1320, 640), (1250, 700), (1150, 760), (1050, 800), (900, 820), (800, 830),
@@ -125,9 +120,7 @@ for j in range(1, k):
     labels[l3 == j] = int(np.argmax(c))
 cv2.imwrite('work/labels.png', labels)
 
-cols = {0: (0, 0, 0), 1: (90, 90, 90)}
 pal = [(60, 220, 60), (60, 255, 200), (0, 255, 255), (0, 170, 255), (0, 90, 255), (60, 60, 255), (255, 0, 255)]
-vis = (im * 0.45).astype(np.uint8)
 over = np.zeros_like(im)
 over[labels == 1] = (160, 120, 60)
 for s in range(7):

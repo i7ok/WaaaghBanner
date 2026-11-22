@@ -61,7 +61,7 @@ class LetterLayer(
             val b = (c and 0xFF) / 255f
             val lum = 0.2126f * r + 0.7152f * g + 0.0722f * b
             val steel = 0.04f + 0.32f * Math.pow(lum.toDouble(), 0.9).toFloat()
-            metal[p] = rgb(steel * 0.90f, steel * 1.0f, steel * 1.06f)
+            metal[p] = Colors.pack(steel * 0.90f, steel * 1.0f, steel * 1.06f)
             Colors.rgbToHsv(r, g, b, hsv)
             hue[p] = hsv[0]; sat[p] = hsv[1]; value[p] = hsv[2]
             paintWeight[p] = BannerMath.clamp01((hsv[1] - 0.18f) / 0.30f) *
@@ -119,8 +119,6 @@ class LetterLayer(
             }
         }
     }
-
-    private fun rgb(r: Float, g: Float, b: Float): Int = Colors.pack(r, g, b)
 }
 
 object Colors {
